@@ -1,4 +1,6 @@
 <template>
+  <button :on-click="prev_page()">prev</button>
+  <button :on-click="next_page()">next</button>
   <div v-for="e in crawledData">
     <hr />
     <p>{{ e.url }}</p>
@@ -13,15 +15,24 @@ export default {
   data: function () {
     return {
       crawledData: [],
+      page_number: 0,
+      items_per_page: 5,
+
     };
   },
   methods: {
     getlist() {
-      axios.get("http://localhost:5000/webpages").then((response) => {
+      axios.get("http://localhost:5000/search/").then((response) => {
         this.crawledData = response.data.results;
-        console.log(response.data);
+
+        // console.log(response.data);
       });
     },
+    prev_page(){
+
+
+    }
+
   },
   mounted() {
     this.timer = setInterval(() => {

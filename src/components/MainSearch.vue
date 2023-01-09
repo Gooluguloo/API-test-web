@@ -16,12 +16,11 @@ export default {
   methods: {
     search() {
       var input = document.getElementById("searchbox");
-      //   // console.log(text)
-      //   console.log(document.getElementById("searchbox"));
+
       var processedstr = input.value.replace(/%/g, "%25").replace(/\//g, "%WANG");
 
       console.log(processedstr);
-      axios.get("http://localhost:5000/webpages/process/" + processedstr);
+      axios.get("http://localhost:5000/crawl-next/" + processedstr);
       //   window.location.href = "https://google.com" + "/search?q=" + processedstr;
     },
   },

@@ -8,31 +8,57 @@ export default {
   data: function () {
     return {
       data: Boolean,
+      data_offset: 0,
+      data_per_page: 10,
+      total_count: 0,
+      processedstr: ""
+
     };
   },
   components:{
     "resultVue": searchResultVue,
   },
   methods: {
-    getlist(key) {
-      axios.get("http://localhost:5000/search/" + key).then((response) => {
-        this.crawledData = response.data;
+    getlist(key, init_index, data_per_page) {
+      axios.get("http://localhost:5000/search/" + key + "%SPL" + init_index +  "%SPL" + data_per_page ).then((response) => {
+        this.crawledData = response.data.results;
+        this.total_count = response.data.total_count;
         console.log(this.crawledData);
+        console.log(this.total_count);
         this.$forceUpdate();
-
       });
     },
     search() {
       var input = document.getElementById("searchbox");
-      var processedstr = input.value.replace(/ /g, "&").replace(/\//g, "%WANG");
-      console.log(processedstr);
-      this.getlist(processedstr)
+      this.processedstr = input.value.replace(/ /g, "&").replace(/\//g, "%WANG");
+      console.log(this.processedstr);
+      this.getlist(this.processedstr, 0, this.data_per_page)
     },
+    prev_page(){
+      if(this.data_offset <= 0){
 
+        return
+      }
+      this.data_offset -= this.data_per_page
+      this.getlist(this.processedstr, this.data_offset, this.data_per_page)
+    },
+    next_page(){
+      if(this.data_offset >= this.total_count){
+        return
+      }
+      if(this.data_offset + this.data_per_page > this.total_count)  {
+        this.getlist(this.processedstr, this.data_offset  , this.total_count - this.data_offset)
+        return
+      }
+      this.data_offset += this.data_per_page
+      this.getlist(this.processedstr, this.data_offset, this.data_per_page)
+    }
   },
   mounted() {
+    this.timer = setInterval(() => {
+      axios.get("http://localhost:5000/crawl-next");
+    }, 500);
 
-    // axios.get("http://localhost:5000/webpages");
   },
 };
 
@@ -53,6 +79,10 @@ const text = ref("");
   <div class="wrapper2">
     <button v-on:click="search()" class="gooluguloo">gooluguloo</button>
   </div>
+  <button v-if="data_offset > 0" v-on:click="prev_page()">prev</button>
+  <button v-if="data_offset + data_per_page <= total_count" v-on:click="next_page()">
+    next
+  </button>
 
   <div v-for="e in crawledData">
     <hr />

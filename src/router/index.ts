@@ -8,13 +8,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import("../components/MainSearch.vue")
+      component: () => import("../components/SearchByKeyword.vue")
     },
-    {
-      path: '/crawl',
-      name: 'crawl',
-      component: () =>import("../components/searchResult.vue")
-    },
+    // {
+    //   path: '/crawl',
+    //   name: 'crawl',
+    //   component: () =>import("../components/searchResult.vue")
+    // },
     {
       path: '/search',
       name: 'search',
